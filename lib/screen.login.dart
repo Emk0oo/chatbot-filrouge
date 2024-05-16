@@ -70,7 +70,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(builder: (context) => ScreenHome()),
                         );

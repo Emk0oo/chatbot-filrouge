@@ -76,7 +76,7 @@ class _ScreenRegisterState extends State<ScreenRegister> {
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                               builder: (context) => ScreenLogin()),
