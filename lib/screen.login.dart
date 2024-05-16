@@ -17,23 +17,73 @@ class _ScreenLoginState extends State<ScreenLogin> {
           'Connexion',
           style: TextStyle(
             fontSize: 30,
-            color: Color(0xFF9F5540),
+            color: Color.fromARGB(255, 0, 0, 0),
             fontWeight: FontWeight.bold,
           ),
         ),
       ),
       body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ScreenRegister()),
-                );
-              },
-              child: const Text('Inscription'),
+            Container(
+                margin: const EdgeInsets.only(top: 50, left: 20, right: 20),
+                child: Column(
+                  children: [
+                    SizedBox(height: 80),
+                    TextField(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'Pseudo',
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    TextField(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'Mot de passe',
+                      ),
+                    ),
+                  ],
+                )),
+            Column(
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ScreenRegister()),
+                    );
+                  },
+                  child: const Text(
+                    "S'enregistrer",
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 0, 0, 0),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // Code pour la connexion
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.black,
+                        padding: EdgeInsets.symmetric(vertical: 15),
+                      ),
+                      child: const Text(
+                        'Se connecter',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
+            SizedBox(height: 20),
           ],
         ),
       ),
