@@ -22,7 +22,7 @@ class _ScreenHomeState extends State<ScreenHome> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -30,7 +30,7 @@ class _ScreenHomeState extends State<ScreenHome> {
             Text(
               "Dernières conversations",
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 23,
                 color: Color.fromARGB(255, 0, 0, 0),
                 fontWeight: FontWeight.bold,
               ),
@@ -51,7 +51,7 @@ class _ScreenHomeState extends State<ScreenHome> {
                           height: 100,
                           decoration: BoxDecoration(
                             color: Color.fromARGB(255, 238, 238, 238),
-                            borderRadius: BorderRadius.circular(5),
+                            borderRadius: BorderRadius.circular(9),
                           ),
                         ),
                         Text("Nom personnage"),
@@ -59,6 +59,48 @@ class _ScreenHomeState extends State<ScreenHome> {
                           "Nom univers",
                           style: TextStyle(color: Colors.grey),
                         ),
+                      ],
+                    ),
+                  ),
+                  // Ajoutez d'autres containers ici pour les autres conversations
+                ],
+              ),
+            ),
+            SizedBox(height: 50),
+            Text(
+              "Univers",
+              style: TextStyle(
+                fontSize: 23,
+                color: Color.fromARGB(255, 0, 0, 0),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 20),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment
+                          .center, // Centrer verticalement dans la colonne
+                      crossAxisAlignment: CrossAxisAlignment
+                          .center, // Centrer horizontalement dans la colonne
+                      children: [
+                        // Ici data dernières conversations
+                        Container(
+                          width: 175,
+                          height: 175,
+                          decoration: BoxDecoration(
+                            color: Color.fromARGB(255, 238, 238, 238),
+                            borderRadius: BorderRadius.circular(9),
+                          ),
+                        ),
+                        SizedBox(
+                            height:
+                                8), // Espacement entre le container et le texte
+                        Text("Nom univers"),
                       ],
                     ),
                   ),
