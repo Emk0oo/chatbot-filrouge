@@ -12,6 +12,13 @@ class ScreenLogin extends StatefulWidget {
 class _ScreenLoginState extends State<ScreenLogin> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Connexion' , style: TextStyle(fontSize: 30, color: Color(0xFF9F5540),fontWeight: FontWeight.bold, ),),
+      ),
+      body: const Center(
+        child: Text('Hello World'),
+      ),
+    );
   }
 }
