@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:chatbot_filrouge/components/navigationBar.dart';
 
 class ScreenHome extends StatefulWidget {
   const ScreenHome({super.key});
@@ -114,6 +115,7 @@ class _ScreenHomeState extends State<ScreenHome> {
           ],
         ),
       ),
+      bottomNavigationBar: NavigationBarCustom(),
     );
   }
 }

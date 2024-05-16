@@ -8,25 +8,35 @@ class NavigationBarCustom extends StatefulWidget {
 }
 
 class _NavigationBarCustomState extends State<NavigationBarCustom> {
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(items: [
-      BottomNavigationBarItem(
-        icon: Icon(Icons.home),
-        label: "Accueil",
-      ),
-      BottomNavigationBarItem(
-        icon: Icon(Icons.search),
-        label: "Recherche",
-      ),
-      BottomNavigationBarItem(
-        icon: Icon(Icons.message),
-        label: "Messages",
-      ),
-      BottomNavigationBarItem(
-        icon: Icon(Icons.person),
-        label: "Profil",
-      ),
-    ])
+    return BottomNavigationBar(
+      type: BottomNavigationBarType.fixed,
+      items: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Accueil',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.public),
+          label: 'Univers',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.message),
+          label: 'Messages',
+        ),
+      ],
+      currentIndex: _selectedIndex,
+      selectedItemColor: Colors.red,
+      onTap: _onItemTapped,
+    );
   }
 }
