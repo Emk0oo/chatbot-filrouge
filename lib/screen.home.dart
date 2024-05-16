@@ -62,6 +62,7 @@ class _ScreenHomeState extends State<ScreenHome> {
                       ],
                     ),
                   ),
+
                   // Ajoutez d'autres containers ici pour les autres conversations
                 ],
               ),
@@ -82,6 +83,7 @@ class _ScreenHomeState extends State<ScreenHome> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
+                    padding: EdgeInsets.only(right: 10),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment
                           .center, // Centrer verticalement dans la colonne
@@ -104,6 +106,7 @@ class _ScreenHomeState extends State<ScreenHome> {
                       ],
                     ),
                   ),
+
                   // Ajoutez d'autres containers ici pour les autres conversations
                 ],
               ),
