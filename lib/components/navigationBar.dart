@@ -35,7 +35,7 @@ class _NavigationBarCustomState extends State<NavigationBarCustom> {
         ),
       ],
       currentIndex: _selectedIndex,
-      selectedItemColor: Colors.red,
+      selectedItemColor: const Color.fromARGB(255, 0, 0, 0),
       onTap: _onItemTapped,
     );
   }

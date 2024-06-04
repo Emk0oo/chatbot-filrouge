@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:chatbot_filrouge/screen.login.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class ScreenRegister extends StatefulWidget {
   const ScreenRegister({super.key});
@@ -9,6 +12,29 @@ class ScreenRegister extends StatefulWidget {
 }
 
 class _ScreenRegisterState extends State<ScreenRegister> {
+  TextEditingController pseudoController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController nomController = TextEditingController();
+  TextEditingController prenomController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
+
+  void dispose() {
+    pseudoController.dispose();
+    emailController.dispose();
+    nomController.dispose();
+    prenomController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  void updatePasswordMatch() {
+    if (passwordController.text != confirmPasswordController.text) {
+      print("Passwords do not match");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,37 +56,50 @@ class _ScreenRegisterState extends State<ScreenRegister> {
               margin: const EdgeInsets.only(left: 20, right: 20),
               child: Column(
                 children: [
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   TextField(
-                    decoration: InputDecoration(
+                    controller: pseudoController,
+                    decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       hintText: 'Pseudo',
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   TextField(
-                    decoration: InputDecoration(
+                    controller: emailController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Email',
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: nomController,
+                    decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       hintText: 'Nom',
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   TextField(
-                    decoration: InputDecoration(
+                    controller: prenomController,
+                    decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       hintText: 'Prénom',
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   TextField(
-                    decoration: InputDecoration(
+                    controller: passwordController,
+                    decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       hintText: 'Mot de passe',
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   TextField(
-                    decoration: InputDecoration(
+                    controller: confirmPasswordController,
+                    decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       hintText: 'Confirmation mot de passe',
                     ),
@@ -75,16 +114,34 @@ class _ScreenRegisterState extends State<ScreenRegister> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ScreenLogin()),
-                        );
+                      onPressed: () async {
+                        var url = Uri.parse('https://mds.sprw.dev/users');
+
+                        var body = {
+                          'username': pseudoController.text,
+                          'email': emailController.text,
+                          'lastname': nomController.text,
+                          'firstname': prenomController.text,
+                          'password': passwordController.text,
+                        };
+
+                        var response =
+                            await http.post(url, body: json.encode(body));
+
+                        if (response.statusCode == 201 ||
+                            response.statusCode == 200) {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ScreenLogin()),
+                          );
+                        } else {
+                          print("Error: ${response.statusCode}");
+                        }
                       },
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.black,
-                        padding: EdgeInsets.symmetric(vertical: 20),
+                        backgroundColor: Colors.black,
+                        padding: const EdgeInsets.symmetric(vertical: 20),
                         shape: RoundedRectangleBorder(
                           borderRadius:
                               BorderRadius.circular(8), // Moins arrondi
@@ -99,7 +156,7 @@ class _ScreenRegisterState extends State<ScreenRegister> {
                 ),
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
           ],
         ),
       ),

@@ -1,6 +1,8 @@
 import 'package:chatbot_filrouge/screen.home.dart';
 import 'package:chatbot_filrouge/screen.register.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class ScreenLogin extends StatefulWidget {
   const ScreenLogin({Key? key}) : super(key: key);
@@ -10,6 +12,15 @@ class ScreenLogin extends StatefulWidget {
 }
 
 class _ScreenLoginState extends State<ScreenLogin> {
+  TextEditingController pseudoController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  void dispose() {
+    pseudoController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,6 +44,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
                 children: [
                   SizedBox(height: 80),
                   TextField(
+                    controller: pseudoController,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                       hintText: 'Pseudo',
@@ -40,6 +52,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
                   ),
                   SizedBox(height: 20),
                   TextField(
+                    controller: passwordController,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                       hintText: 'Mot de passe',
@@ -54,7 +67,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => ScreenRegister()),
+                      MaterialPageRoute(
+                          builder: (context) => const ScreenRegister()),
                     );
                   },
                   child: const Text(
@@ -69,15 +83,38 @@ class _ScreenLoginState extends State<ScreenLogin> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => ScreenHome()),
-                        );
+                      onPressed: () async {
+                        var url = Uri.parse('https://mds.sprw.dev/auth');
+
+                        var body = {
+                          'username': pseudoController.text,
+                          'password': passwordController.text,
+                        };
+
+                        var response =
+                            await http.post(url, body: jsonEncode(body));
+
+                        if (response.statusCode == 200 ||
+                            response.statusCode == 201) {
+                          var bodyResponse = jsonDecode(response.body);
+                          print(bodyResponse);
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //       builder: (context) => ScreenRegister()),
+                          // );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Erreur de connexion' +
+                                  response.statusCode.toString()),
+                            ),
+                          );
+                        }
                       },
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.black,
-                        padding: EdgeInsets.symmetric(vertical: 20),
+                        backgroundColor: Colors.black,
+                        padding: const EdgeInsets.symmetric(vertical: 20),
                         shape: RoundedRectangleBorder(
                           borderRadius:
                               BorderRadius.circular(8), // Moins arrondi
@@ -92,7 +129,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
                 ),
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
           ],
         ),
       ),
