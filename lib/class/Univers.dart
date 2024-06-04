@@ -9,7 +9,6 @@ class Univers {
         await http.get(url, headers: {'Authorization': 'Bearer $token'});
 
     if (response.statusCode == 200) {
-      debugPrint('Univers: ${response.body}');
       // Parse the JSON response into a list
       return json.decode(response.body) as List<dynamic>;
     } else {

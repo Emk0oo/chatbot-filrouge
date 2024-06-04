@@ -128,14 +128,14 @@ class _ScreenHomeState extends State<ScreenHome> {
                               child: Text('Aucun univers disponible'));
                         } else {
                           final data = snapshot.data!;
-                          debugPrint(data.toString());
                           return Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: List.generate(
                               data.length,
                               (index) {
-                                final imageUrl = 'https://mds.sprw.dev/' +
-                                    (data[index]['image'] ?? '');
+                                final imageUrl =
+                                    'https://mds.sprw.dev/image_data/' +
+                                        (data[index]['image'] ?? '');
                                 return Container(
                                   padding: const EdgeInsets.only(right: 10),
                                   child: Column(
