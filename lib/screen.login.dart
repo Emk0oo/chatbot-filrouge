@@ -3,6 +3,7 @@ import 'package:chatbot_filrouge/screen.register.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ScreenLogin extends StatefulWidget {
   const ScreenLogin({Key? key}) : super(key: key);
@@ -90,23 +91,34 @@ class _ScreenLoginState extends State<ScreenLogin> {
                           'username': pseudoController.text,
                           'password': passwordController.text,
                         };
-
                         var response =
                             await http.post(url, body: jsonEncode(body));
-
                         if (response.statusCode == 200 ||
                             response.statusCode == 201) {
-                          var bodyResponse = jsonDecode(response.body);
-                          print(bodyResponse);
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //       builder: (context) => ScreenRegister()),
-                          // );
+                          var bodyResponseMap = jsonDecode(response.body);
+                          if (bodyResponseMap.containsKey('token')) {
+                            var token = bodyResponseMap['token'];
+                            var parts = token.split('.');
+                            var payload = parts[1];
+                            var payloadMap = jsonDecode(utf8.decode(
+                                base64.decode(base64.normalize(payload))));
+                            SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            await prefs.setString('jwt_token', token);
+                            print('Token saved in shared preferences');
+                            print('Extracted JWT payload: $payloadMap');
+                          } else {
+                            print('Error: JWT token not found in response');
+                          }
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ScreenHome()),
+                          );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('Erreur de connexion' +
+                              content: Text('Erreur de connexion ' +
                                   response.statusCode.toString()),
                             ),
                           );
