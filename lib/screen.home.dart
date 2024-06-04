@@ -27,8 +27,8 @@ class _ScreenHomeState extends State<ScreenHome> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 20),
-            Text(
+            const SizedBox(height: 20),
+            const Text(
               "Dernières conversations",
               style: TextStyle(
                 fontSize: 23,
@@ -36,7 +36,7 @@ class _ScreenHomeState extends State<ScreenHome> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
@@ -51,12 +51,12 @@ class _ScreenHomeState extends State<ScreenHome> {
                           width: 100,
                           height: 100,
                           decoration: BoxDecoration(
-                            color: Color.fromARGB(255, 238, 238, 238),
+                            color: const Color.fromARGB(255, 238, 238, 238),
                             borderRadius: BorderRadius.circular(9),
                           ),
                         ),
-                        Text("Nom personnage"),
-                        Text(
+                        const Text("Nom personnage"),
+                        const Text(
                           "Nom univers",
                           style: TextStyle(color: Colors.grey),
                         ),
@@ -68,8 +68,8 @@ class _ScreenHomeState extends State<ScreenHome> {
                 ],
               ),
             ),
-            SizedBox(height: 50),
-            Text(
+            const SizedBox(height: 50),
+            const Text(
               "Univers",
               style: TextStyle(
                 fontSize: 23,
@@ -77,14 +77,14 @@ class _ScreenHomeState extends State<ScreenHome> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding: EdgeInsets.only(right: 10),
+                    padding: const EdgeInsets.only(right: 10),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment
                           .center, // Centrer verticalement dans la colonne
@@ -96,14 +96,14 @@ class _ScreenHomeState extends State<ScreenHome> {
                           width: 175,
                           height: 175,
                           decoration: BoxDecoration(
-                            color: Color.fromARGB(255, 238, 238, 238),
+                            color: const Color.fromARGB(255, 238, 238, 238),
                             borderRadius: BorderRadius.circular(9),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                             height:
                                 8), // Espacement entre le container et le texte
-                        Text("Nom univers"),
+                        const Text("Nom univers"),
                       ],
                     ),
                   ),
@@ -115,7 +115,7 @@ class _ScreenHomeState extends State<ScreenHome> {
           ],
         ),
       ),
-      bottomNavigationBar: NavigationBarCustom(),
+      bottomNavigationBar: const NavigationBarCustom(),
     );
   }
 }
