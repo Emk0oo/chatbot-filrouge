@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:chatbot_filrouge/components/navigationBar.dart';
 
 class ScreenUnivers extends StatefulWidget {
   const ScreenUnivers({super.key});
@@ -22,6 +23,7 @@ class _ScreenUniversState extends State<ScreenUnivers> {
         ),
       ),
       body: Text("Welcome to Screen Universsssss!"),
+      bottomNavigationBar: const NavigationBarCustom(),
     );
   }
 }
