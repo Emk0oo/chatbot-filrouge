@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:chatbot_filrouge/components/navigationBar.dart';
 import 'package:chatbot_filrouge/class/token.dart';
-import 'package:chatbot_filrouge/class/univers.dart';
+import 'package:chatbot_filrouge/class/univers.dart'; // Make sure this import is correct
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 
@@ -14,6 +14,7 @@ class ScreenUnivers extends StatefulWidget {
 
 class _ScreenUniversState extends State<ScreenUnivers> {
   final Token _tokenClass = Token();
+  final TextEditingController _nameController = TextEditingController();
 
   Future<Uint8List?> _fetchImage(String url, String token) async {
     final response = await http.get(
@@ -30,6 +31,37 @@ class _ScreenUniversState extends State<ScreenUnivers> {
     }
   }
 
+  void _showModal(BuildContext context, String token) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Ajout d\'un d\'univers'),
+          content: TextField(
+            controller: _nameController,
+            decoration: const InputDecoration(
+              hintText: 'Nom de l\'univers',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Fermer'),
+            ),
+            TextButton(
+              onPressed: () async {
+                await Univers().createUnivers(token, _nameController.text);
+                Navigator.pop(context);
+                setState(() {});
+              },
+              child: const Text('Ajouter'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,6 +74,25 @@ class _ScreenUniversState extends State<ScreenUnivers> {
             fontWeight: FontWeight.bold,
           ),
         ),
+        actions: [
+          FutureBuilder<String?>(
+            future: _tokenClass.getToken(),
+            builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              } else if (snapshot.hasError) {
+                return const Icon(Icons.error);
+              } else if (!snapshot.hasData || snapshot.data == null) {
+                return const Icon(Icons.error);
+              } else {
+                return IconButton(
+                  icon: const Icon(Icons.add),
+                  onPressed: () => _showModal(context, snapshot.data!),
+                );
+              }
+            },
+          ),
+        ],
       ),
       body: FutureBuilder<String?>(
         future: _tokenClass.getToken(),
@@ -61,6 +112,13 @@ class _ScreenUniversState extends State<ScreenUnivers> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 20),
+                  const Text(
+                    'Welcome to the universe!',
+                    style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   Expanded(
                     child: FutureBuilder<List<dynamic>>(
                       future: Univers().getAllUnivers(token),
