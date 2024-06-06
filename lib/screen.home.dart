@@ -133,9 +133,11 @@ class _ScreenHomeState extends State<ScreenHome> {
                             children: List.generate(
                               data.length,
                               (index) {
-                                final imageUrl =
-                                    'https://mds.sprw.dev/image_data/' +
-                                        (data[index]['image'] ?? '');
+                                final imageUrl = data[index]['image'] == ''
+                                    ? 'https://via.placeholder.com/175'
+                                    : 'https://mds.sprw.dev/image_data/' +
+                                        data[index]['image'];
+                                debugPrint('imageUrl: $imageUrl');
                                 return Container(
                                   padding: const EdgeInsets.only(right: 10),
                                   child: Column(
@@ -168,6 +170,8 @@ class _ScreenHomeState extends State<ScreenHome> {
                                               } else if (imageSnapshot
                                                       .hasError ||
                                                   !imageSnapshot.hasData) {
+                                                debugPrint(
+                                                    'Failed to load image imageSnapshot.hasError');
                                                 return Image.network(
                                                   'https://via.placeholder.com/175',
                                                   fit: BoxFit.cover,
