@@ -29,4 +29,34 @@ class Univers {
       throw Exception('Failed to create univers');
     }
   }
+
+  Future<void> deleteUnivers(String token, int id) async {
+    var url = Uri.parse('https://mds.sprw.dev/universes/$id');
+    var response = await http.delete(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode != 204) {
+      throw Exception('Failed to delete univers');
+    }
+  }
+
+  Future<void> updateUnivers(String token, int id, String name) async {
+    var url = Uri.parse('https://mds.sprw.dev/universes/$id');
+    var response = await http.put(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({'name': name}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to update univers');
+    }
+  }
 }
