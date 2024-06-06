@@ -161,13 +161,6 @@ class _ScreenUniversState extends State<ScreenUnivers> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 20),
-                  const Text(
-                    'Welcome to the universe!',
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
                   Expanded(
                     child: FutureBuilder<List<dynamic>>(
                       future: Univers().getAllUnivers(token),
