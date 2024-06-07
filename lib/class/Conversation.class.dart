@@ -1,10 +1,10 @@
+// lib/class/Conversation.class.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class Conversation {
-  //create a conversation
   Future<void> createConversation(
-      String token, int character_id, int user_id) async {
+      String token, int characterId, int userId) async {
     var url = Uri.parse('https://mds.sprw.dev/conversations/');
     var response = await http.post(
       url,
@@ -12,7 +12,7 @@ class Conversation {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
       },
-      body: jsonEncode({'character_id': character_id, 'user_id': user_id}),
+      body: jsonEncode({'character_id': characterId, 'user_id': userId}),
     );
 
     if (response.statusCode != 201) {

@@ -4,6 +4,7 @@ import 'package:chatbot_filrouge/class/token.dart';
 import 'package:chatbot_filrouge/class/Personnage.class.dart';
 import 'package:chatbot_filrouge/class/Image.class.dart';
 import 'dart:typed_data';
+import 'package:chatbot_filrouge/screen.personnage.dart';
 
 class ScreenPersonnageList extends StatefulWidget {
   final String universId;
@@ -50,6 +51,19 @@ class _ScreenPersonnageListState extends State<ScreenPersonnageList> {
           ],
         );
       },
+    );
+  }
+
+  void _navigateToPersonnage(
+      BuildContext context, int universId, int personnageId) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ScreenPersonnage(
+          universId: universId,
+          personnageId: personnageId,
+        ),
+      ),
     );
   }
 
@@ -120,73 +134,79 @@ class _ScreenPersonnageListState extends State<ScreenPersonnageList> {
                       ? 'https://via.placeholder.com/75'
                       : 'https://mds.sprw.dev/image_data/' +
                           personnage['image'];
-                  return Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 16.0),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: 75,
-                              height: 75,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(9),
-                                child: FutureBuilder<Uint8List?>(
-                                  future:
-                                      _imageFetcher.fetchImage(imageUrl, token),
-                                  builder: (context, imageSnapshot) {
-                                    if (imageSnapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return const Center(
-                                          child: CircularProgressIndicator());
-                                    } else if (imageSnapshot.hasError ||
-                                        !imageSnapshot.hasData) {
-                                      return Image.network(
-                                        'https://via.placeholder.com/75',
-                                        width: 75,
-                                        height: 75,
-                                        fit: BoxFit.cover,
-                                      );
-                                    } else {
-                                      return Image.memory(
-                                        imageSnapshot.data!,
-                                        width: 75,
-                                        height: 75,
-                                        fit: BoxFit.cover,
-                                      );
-                                    }
-                                  },
+                  return GestureDetector(
+                    onTap: () {
+                      _navigateToPersonnage(
+                          context, universId, personnage['id']);
+                    },
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 16.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: 75,
+                                height: 75,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(9),
+                                  child: FutureBuilder<Uint8List?>(
+                                    future: _imageFetcher.fetchImage(
+                                        imageUrl, token),
+                                    builder: (context, imageSnapshot) {
+                                      if (imageSnapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return const Center(
+                                            child: CircularProgressIndicator());
+                                      } else if (imageSnapshot.hasError ||
+                                          !imageSnapshot.hasData) {
+                                        return Image.network(
+                                          'https://via.placeholder.com/75',
+                                          width: 75,
+                                          height: 75,
+                                          fit: BoxFit.cover,
+                                        );
+                                      } else {
+                                        return Image.memory(
+                                          imageSnapshot.data!,
+                                          width: 75,
+                                          height: 75,
+                                          fit: BoxFit.cover,
+                                        );
+                                      }
+                                    },
+                                  ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    personnage['name'],
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      personnage['name'],
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 5),
-                                  Text(
-                                    personnage['description'],
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  const Divider(),
-                                ],
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      personnage['description'],
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const Divider(),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   );
                 },
               );
