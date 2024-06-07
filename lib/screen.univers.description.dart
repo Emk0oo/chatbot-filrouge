@@ -4,6 +4,7 @@ import 'package:chatbot_filrouge/class/Token.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
+import 'package:chatbot_filrouge/screen.personnageList.dart';
 
 class ImageFetcher {
   Future<Uint8List?> fetchImage(String url, String token) async {
@@ -70,6 +71,21 @@ class _ScreenUniversDescriptionState extends State<ScreenUniversDescription> {
               return Scaffold(
                 appBar: AppBar(
                   title: Text(univers['name']),
+                  actions: [
+                    IconButton(
+                      icon: const Icon(Icons.attribution),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ScreenPersonnageList(
+                              universId: widget.universId,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
                 ),
                 body: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(
