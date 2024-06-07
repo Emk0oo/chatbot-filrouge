@@ -1,3 +1,4 @@
+// lib/class/Personnage.class.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -19,29 +20,19 @@ class Personnage {
     }
   }
 
-  Future<Map<String, dynamic>> getSinglePersonnage(
-      String? token, int idUnivers, int idPersonnage) async {
-    var url = Uri.parse(
-        'https://mds.sprw.dev/universes/$idUnivers/characters/$idPersonnage');
-    var response =
-        await http.get(url, headers: {'Authorization': 'Bearer $token'});
-
-    if (response.statusCode == 200) {
-      return json.decode(response.body) as Map<String, dynamic>;
-    } else {
-      throw Exception('Failed to load data personnage');
-    }
-  }
-
-  Future<List<dynamic>> getAllPersonnage(String? token, int idUnivers) async {
+  Future<List<dynamic>> getAllPersonnage(String token, int idUnivers) async {
     var url = Uri.parse('https://mds.sprw.dev/universes/$idUnivers/characters');
-    var response =
-        await http.get(url, headers: {'Authorization': 'Bearer $token'});
+    var response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
 
     if (response.statusCode == 200) {
-      return json.decode(response.body) as List<dynamic>;
+      return jsonDecode(response.body) as List<dynamic>;
     } else {
-      throw Exception('Failed to load data personnage');
+      throw Exception('Failed to load personnages');
     }
   }
 }

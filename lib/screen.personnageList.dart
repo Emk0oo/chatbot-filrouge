@@ -1,5 +1,6 @@
-import 'package:chatbot_filrouge/class/token.dart';
+// lib/screen/screen_personnage_list.dart
 import 'package:flutter/material.dart';
+import 'package:chatbot_filrouge/class/token.dart';
 import 'package:chatbot_filrouge/class/Personnage.class.dart';
 import 'package:chatbot_filrouge/class/Image.class.dart';
 import 'dart:typed_data';
@@ -17,6 +18,40 @@ class _ScreenPersonnageListState extends State<ScreenPersonnageList> {
   final Personnage _personnage = Personnage();
   final Token _token = Token();
   final ImageClass _imageFetcher = ImageClass();
+  final TextEditingController _nameController = TextEditingController();
+
+  void _showEditModal(BuildContext context, String token, int idUnivers) {
+    _nameController.clear();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Ajouter un personnage'),
+          content: TextField(
+            controller: _nameController,
+            decoration: const InputDecoration(
+              hintText: 'Nom du personnage',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Fermer'),
+            ),
+            TextButton(
+              onPressed: () async {
+                await _personnage.createPersonnage(
+                    token, _nameController.text, idUnivers);
+                Navigator.pop(context);
+                setState(() {});
+              },
+              child: const Text('Ajouter'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,10 +59,24 @@ class _ScreenPersonnageListState extends State<ScreenPersonnageList> {
       appBar: AppBar(
         title: const Text('Personnages de l\'univers'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              // Ajoutez un personnage
+          FutureBuilder<String?>(
+            future: _token.getToken(),
+            builder: (context, tokenSnapshot) {
+              if (tokenSnapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (tokenSnapshot.hasError) {
+                return Center(child: Text('Error: ${tokenSnapshot.error}'));
+              } else if (!tokenSnapshot.hasData || tokenSnapshot.data == null) {
+                return const Center(child: Text('No token found'));
+              }
+
+              final token = tokenSnapshot.data!;
+              final int universId = int.tryParse(widget.universId) ?? 0;
+
+              return IconButton(
+                icon: const Icon(Icons.add),
+                onPressed: () => _showEditModal(context, token, universId),
+              );
             },
           ),
         ],
@@ -79,7 +128,7 @@ class _ScreenPersonnageListState extends State<ScreenPersonnageList> {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
+                            SizedBox(
                               width: 75,
                               height: 75,
                               child: ClipRRect(
