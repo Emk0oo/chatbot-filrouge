@@ -1,6 +1,8 @@
 import 'package:chatbot_filrouge/class/token.dart';
 import 'package:flutter/material.dart';
 import 'package:chatbot_filrouge/class/Personnage.class.dart';
+import 'package:chatbot_filrouge/class/Image.class.dart';
+import 'dart:typed_data';
 
 class ScreenPersonnageList extends StatefulWidget {
   final String universId;
@@ -14,12 +16,21 @@ class ScreenPersonnageList extends StatefulWidget {
 class _ScreenPersonnageListState extends State<ScreenPersonnageList> {
   final Personnage _personnage = Personnage();
   final Token _token = Token();
+  final ImageClass _imageFetcher = ImageClass();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Personnages de l\'univers ${widget.universId}'),
+        title: const Text('Personnages de l\'univers'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              // Ajoutez un personnage
+            },
+          ),
+        ],
       ),
       body: FutureBuilder<String?>(
         future: _token.getToken(),
@@ -56,6 +67,10 @@ class _ScreenPersonnageListState extends State<ScreenPersonnageList> {
                 itemBuilder: (context, index) {
                   final personnage =
                       personnageList[index] as Map<String, dynamic>;
+                  final imageUrl = personnage['image'] == ''
+                      ? 'https://via.placeholder.com/75'
+                      : 'https://mds.sprw.dev/image_data/' +
+                          personnage['image'];
                   return Column(
                     children: [
                       Padding(
@@ -64,13 +79,40 @@ class _ScreenPersonnageListState extends State<ScreenPersonnageList> {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Remplacez cette image par l'image réelle du personnage
                             Container(
-                              width: 50,
-                              height: 50,
-                              color: Colors.grey, // Placeholder pour l'image
-                              margin: const EdgeInsets.only(right: 10.0),
+                              width: 75,
+                              height: 75,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(9),
+                                child: FutureBuilder<Uint8List?>(
+                                  future:
+                                      _imageFetcher.fetchImage(imageUrl, token),
+                                  builder: (context, imageSnapshot) {
+                                    if (imageSnapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const Center(
+                                          child: CircularProgressIndicator());
+                                    } else if (imageSnapshot.hasError ||
+                                        !imageSnapshot.hasData) {
+                                      return Image.network(
+                                        'https://via.placeholder.com/75',
+                                        width: 75,
+                                        height: 75,
+                                        fit: BoxFit.cover,
+                                      );
+                                    } else {
+                                      return Image.memory(
+                                        imageSnapshot.data!,
+                                        width: 75,
+                                        height: 75,
+                                        fit: BoxFit.cover,
+                                      );
+                                    }
+                                  },
+                                ),
+                              ),
                             ),
+                            const SizedBox(width: 10),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
