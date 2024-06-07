@@ -67,8 +67,8 @@ class _ScreenPersonnageState extends State<ScreenPersonnage> {
                   children: [
                     Center(
                       child: SizedBox(
-                        width: 175,
-                        height: 175,
+                        width: 375,
+                        height: 375,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(9),
                           child: Image.network(imageUrl, fit: BoxFit.cover),
