@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 
 class ScreenPersonnageConversation extends StatelessWidget {
   final int characterId;
+  final int universId;
   final int userId;
 
   const ScreenPersonnageConversation({
     Key? key,
     required this.characterId,
+    required this.universId,
     required this.userId,
   }) : super(key: key);
 
@@ -30,6 +32,9 @@ class ScreenPersonnageConversation extends StatelessWidget {
               'User ID: $userId',
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
+            Text('Univers ID: $universId',
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const SizedBox(height: 20),
             const Text('Conversation content goes here...'),
           ],

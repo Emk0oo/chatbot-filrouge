@@ -51,6 +51,7 @@ class _ScreenPersonnageState extends State<ScreenPersonnage> {
       MaterialPageRoute(
         builder: (context) => ScreenPersonnageConversation(
           characterId: widget.personnageId,
+          universId: widget.universId,
           userId: id,
         ),
       ),
