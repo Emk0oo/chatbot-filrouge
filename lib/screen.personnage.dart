@@ -1,7 +1,8 @@
-// lib/screen/screen_personnage.dart
 import 'package:flutter/material.dart';
 import 'package:chatbot_filrouge/class/token.dart';
 import 'package:chatbot_filrouge/class/Personnage.class.dart';
+import 'package:chatbot_filrouge/screen.personnageConversation.dart';
+import 'dart:convert';
 
 class ScreenPersonnage extends StatefulWidget {
   final int universId;
@@ -21,6 +22,41 @@ class _ScreenPersonnageState extends State<ScreenPersonnage> {
   final Personnage _personnage = Personnage();
   final Token _token = Token();
 
+  void startConversation(String token) {
+    debugPrint(token);
+
+    // Split the token to get the payload part
+    final parts = token.split('.');
+    if (parts.length != 3) {
+      throw Exception('Invalid token');
+    }
+
+    // Decode the base64Url part
+    final payload = parts[1];
+    var normalized = base64Url.normalize(payload);
+    var decodedBytes = base64Url.decode(normalized);
+    var decodedString = utf8.decode(decodedBytes);
+
+    // Decode the JSON part
+    final tokenDecoded = jsonDecode(decodedString);
+    debugPrint(tokenDecoded['data'].toString());
+
+    // Decode the 'data' field if it is a string
+    final data = jsonDecode(tokenDecoded['data']);
+    final id = data['id'];
+    debugPrint('ID: $id');
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ScreenPersonnageConversation(
+          characterId: widget.personnageId,
+          userId: id,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,9 +69,9 @@ class _ScreenPersonnageState extends State<ScreenPersonnage> {
           if (tokenSnapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (tokenSnapshot.hasError) {
-            return Center(child: Text('Error: ${tokenSnapshot.error}'));
+            return Center(child: Text('Erreur : ${tokenSnapshot.error}'));
           } else if (!tokenSnapshot.hasData || tokenSnapshot.data == null) {
-            return const Center(child: Text('No token found'));
+            return const Center(child: Text('Aucun token trouvé'));
           }
 
           final token = tokenSnapshot.data!;
@@ -49,10 +85,10 @@ class _ScreenPersonnageState extends State<ScreenPersonnage> {
                 return const Center(child: CircularProgressIndicator());
               } else if (personnageSnapshot.hasError) {
                 return Center(
-                    child: Text('Error: ${personnageSnapshot.error}'));
+                    child: Text('Erreur : ${personnageSnapshot.error}'));
               } else if (!personnageSnapshot.hasData ||
                   personnageSnapshot.data == null) {
-                return const Center(child: Text('No data found'));
+                return const Center(child: Text('Aucune donnée trouvée'));
               }
 
               final personnage = personnageSnapshot.data!;
@@ -85,6 +121,11 @@ class _ScreenPersonnageState extends State<ScreenPersonnage> {
                     Text(
                       personnage['description'],
                       style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 10),
+                    TextButton(
+                      onPressed: () => startConversation(token),
+                      child: Text(personnage['name']),
                     ),
                   ],
                 ),
