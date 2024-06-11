@@ -73,7 +73,11 @@ class _ScreenPersonnageConversationState
       throw Exception('No conversation ID found');
     }
 
-    return await _message.getAllMessage(token, _conversationId!);
+    List<dynamic> messages =
+        await _message.getAllMessage(token, _conversationId!);
+    messages.sort((a, b) => DateTime.parse(a['created_at'])
+        .compareTo(DateTime.parse(b['created_at'])));
+    return messages;
   }
 
   @override
@@ -117,9 +121,26 @@ class _ScreenPersonnageConversationState
                   itemCount: messages.length,
                   itemBuilder: (context, index) {
                     var message = messages[index];
-                    return ListTile(
-                      title: Text('Message ID: ${message['id']}'),
-                      subtitle: Text('Content: ${message['content']}'),
+                    bool isSentByHuman = message['is_sent_by_human'];
+                    return Align(
+                      alignment: isSentByHuman
+                          ? Alignment.centerRight
+                          : Alignment.centerLeft,
+                      child: Container(
+                        margin:
+                            EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                        padding: EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: isSentByHuman ? Colors.blue : Colors.grey[300],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          message['content'],
+                          style: TextStyle(
+                            color: isSentByHuman ? Colors.white : Colors.black,
+                          ),
+                        ),
+                      ),
                     );
                   },
                 );
