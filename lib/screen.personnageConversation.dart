@@ -1,7 +1,8 @@
 // lib/screen/screen_personnage_conversation.dart
 import 'package:flutter/material.dart';
-import 'package:chatbot_filrouge/class/Conversation.class.dart'; // Assurez-vous de mettre le bon chemin vers votre classe
-import 'package:chatbot_filrouge/class/Token.dart'; // Assurez-vous de mettre le bon chemin vers votre classe
+import 'package:chatbot_filrouge/class/Conversation.class.dart';
+import 'package:chatbot_filrouge/class/Token.dart';
+import 'package:chatbot_filrouge/class/Message.class.dart';
 
 class ScreenPersonnageConversation extends StatefulWidget {
   final int characterId;
@@ -24,6 +25,8 @@ class _ScreenPersonnageConversationState
     extends State<ScreenPersonnageConversation> {
   final Conversation _conversation = Conversation();
   final Token _token = Token();
+  final Message _message = Message();
+  int? _conversationId;
 
   Future<List<dynamic>> _fetchConversations() async {
     final String? token = await _token.getToken();
@@ -40,10 +43,8 @@ class _ScreenPersonnageConversationState
       return conversation['character_id'] == widget.characterId;
     }).toList();
 
-    // Si aucune conversation n'est trouvée, afficher un message de débogage
+    // Si aucune conversation n'est trouvée, créer une nouvelle conversation
     if (filteredConversations.isEmpty) {
-      debugPrint(
-          'No conversations found for character_id: ${widget.characterId}');
       await _conversation.createConversation(
           token, widget.characterId, widget.userId);
 
@@ -54,7 +55,25 @@ class _ScreenPersonnageConversationState
       }).toList();
     }
 
+    // Assigner l'ID de la première conversation trouvée (ou nouvellement créée)
+    if (filteredConversations.isNotEmpty) {
+      _conversationId = filteredConversations.first['id'];
+    }
+
     return filteredConversations;
+  }
+
+  Future<List<dynamic>> _fetchMessages() async {
+    final String? token = await _token.getToken();
+    if (token == null) {
+      throw Exception('Token not found');
+    }
+
+    if (_conversationId == null) {
+      throw Exception('No conversation ID found');
+    }
+
+    return await _message.getAllMessage(token, _conversationId!);
   }
 
   @override
@@ -77,14 +96,32 @@ class _ScreenPersonnageConversationState
             }
 
             List<dynamic> conversations = snapshot.data!;
+            _conversationId = conversations.first['id'];
 
-            return ListView.builder(
-              itemCount: conversations.length,
-              itemBuilder: (context, index) {
-                var conversation = conversations[index];
-                return ListTile(
-                  title: Text('Conversation ID: ${conversation['id']}'),
-                  subtitle: Text('Created At: ${conversation['created_at']}'),
+            return FutureBuilder<List<dynamic>>(
+              future: _fetchMessages(),
+              builder: (context, messageSnapshot) {
+                if (messageSnapshot.connectionState ==
+                    ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (messageSnapshot.hasError) {
+                  return Center(child: Text('Error: ${messageSnapshot.error}'));
+                } else if (!messageSnapshot.hasData ||
+                    messageSnapshot.data!.isEmpty) {
+                  return const Center(child: Text('No messages found'));
+                }
+
+                List<dynamic> messages = messageSnapshot.data!;
+
+                return ListView.builder(
+                  itemCount: messages.length,
+                  itemBuilder: (context, index) {
+                    var message = messages[index];
+                    return ListTile(
+                      title: Text('Message ID: ${message['id']}'),
+                      subtitle: Text('Content: ${message['content']}'),
+                    );
+                  },
                 );
               },
             );
