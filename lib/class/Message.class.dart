@@ -22,7 +22,7 @@ class Message {
     return messages;
   }
 
-  Future<void> createMessage(
+  Future<Map<String, dynamic>> createMessage(
       String token, int conversationId, String content) async {
     var url = Uri.parse(
         'https://mds.sprw.dev/conversations/$conversationId/messages');
@@ -38,5 +38,7 @@ class Message {
     if (response.statusCode != 201) {
       throw Exception('Failed to create message');
     }
+
+    return jsonDecode(response.body);
   }
 }

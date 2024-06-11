@@ -26,6 +26,7 @@ class _ScreenPersonnageConversationState
   final Conversation _conversation = Conversation();
   final Token _token = Token();
   final Message _message = Message();
+  final TextEditingController _messageController = TextEditingController();
   int? _conversationId;
 
   Future<List<dynamic>> _fetchConversations() async {
@@ -86,68 +87,107 @@ class _ScreenPersonnageConversationState
       appBar: AppBar(
         title: const Text('Conversation'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: FutureBuilder<List<dynamic>>(
-          future: _fetchConversations(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Center(child: Text('No conversations found'));
-            }
+      body: Column(
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: FutureBuilder<List<dynamic>>(
+                future: _fetchConversations(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Center(child: Text('No conversations found'));
+                  }
 
-            List<dynamic> conversations = snapshot.data!;
-            _conversationId = conversations.first['id'];
+                  List<dynamic> conversations = snapshot.data!;
+                  _conversationId = conversations.first['id'];
 
-            return FutureBuilder<List<dynamic>>(
-              future: _fetchMessages(),
-              builder: (context, messageSnapshot) {
-                if (messageSnapshot.connectionState ==
-                    ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (messageSnapshot.hasError) {
-                  return Center(child: Text('Error: ${messageSnapshot.error}'));
-                } else if (!messageSnapshot.hasData ||
-                    messageSnapshot.data!.isEmpty) {
-                  return const Center(child: Text('No messages found'));
-                }
+                  return FutureBuilder<List<dynamic>>(
+                    future: _fetchMessages(),
+                    builder: (context, messageSnapshot) {
+                      if (messageSnapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (messageSnapshot.hasError) {
+                        return Center(
+                            child: Text('Error: ${messageSnapshot.error}'));
+                      } else if (!messageSnapshot.hasData ||
+                          messageSnapshot.data!.isEmpty) {
+                        return const Center(child: Text('No messages found'));
+                      }
 
-                List<dynamic> messages = messageSnapshot.data!;
+                      List<dynamic> messages = messageSnapshot.data!;
 
-                return ListView.builder(
-                  itemCount: messages.length,
-                  itemBuilder: (context, index) {
-                    var message = messages[index];
-                    bool isSentByHuman = message['is_sent_by_human'];
-                    return Align(
-                      alignment: isSentByHuman
-                          ? Alignment.centerRight
-                          : Alignment.centerLeft,
-                      child: Container(
-                        margin:
-                            EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                        padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: isSentByHuman ? Colors.blue : Colors.grey[300],
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          message['content'],
-                          style: TextStyle(
-                            color: isSentByHuman ? Colors.white : Colors.black,
-                          ),
-                        ),
+                      return ListView.builder(
+                        itemCount: messages.length,
+                        itemBuilder: (context, index) {
+                          var message = messages[index];
+                          bool isSentByHuman = message['is_sent_by_human'];
+                          return Align(
+                            alignment: isSentByHuman
+                                ? Alignment.centerRight
+                                : Alignment.centerLeft,
+                            child: Container(
+                              margin: EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 10),
+                              padding: EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: isSentByHuman
+                                    ? Colors.blue
+                                    : Colors.grey[300],
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(
+                                message['content'],
+                                style: TextStyle(
+                                  color: isSentByHuman
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _messageController,
+                    decoration: InputDecoration(
+                      hintText: 'Nouveau message ...',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                    );
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.send),
+                  onPressed: () {
+                    // Méthode pour envoyer le message
+                    // Vous pourrez ajouter la logique ici plus tard
+                    String content = _messageController.text;
+                    _messageController.clear();
+                    print('Message envoyé: $content');
                   },
-                );
-              },
-            );
-          },
-        ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
