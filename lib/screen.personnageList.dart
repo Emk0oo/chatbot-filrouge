@@ -1,9 +1,7 @@
-// lib/screen/screen_personnage_list.dart
 import 'package:flutter/material.dart';
 import 'package:chatbot_filrouge/class/token.dart';
 import 'package:chatbot_filrouge/class/Personnage.class.dart';
-import 'package:chatbot_filrouge/class/Image.class.dart';
-import 'dart:typed_data';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatbot_filrouge/screen.personnage.dart';
 
 class ScreenPersonnageList extends StatefulWidget {
@@ -18,7 +16,6 @@ class ScreenPersonnageList extends StatefulWidget {
 class _ScreenPersonnageListState extends State<ScreenPersonnageList> {
   final Personnage _personnage = Personnage();
   final Token _token = Token();
-  final ImageClass _imageFetcher = ImageClass();
   final TextEditingController _nameController = TextEditingController();
 
   void _showEditModal(BuildContext context, String token, int idUnivers) {
@@ -152,31 +149,18 @@ class _ScreenPersonnageListState extends State<ScreenPersonnageList> {
                                 height: 75,
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(9),
-                                  child: FutureBuilder<Uint8List?>(
-                                    future: _imageFetcher.fetchImage(
-                                        imageUrl, token),
-                                    builder: (context, imageSnapshot) {
-                                      if (imageSnapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return const Center(
-                                            child: CircularProgressIndicator());
-                                      } else if (imageSnapshot.hasError ||
-                                          !imageSnapshot.hasData) {
-                                        return Image.network(
-                                          'https://via.placeholder.com/75',
-                                          width: 75,
-                                          height: 75,
-                                          fit: BoxFit.cover,
-                                        );
-                                      } else {
-                                        return Image.memory(
-                                          imageSnapshot.data!,
-                                          width: 75,
-                                          height: 75,
-                                          fit: BoxFit.cover,
-                                        );
-                                      }
-                                    },
+                                  child: CachedNetworkImage(
+                                    imageUrl: imageUrl,
+                                    placeholder: (context, url) => const Center(
+                                        child: CircularProgressIndicator()),
+                                    errorWidget: (context, url, error) =>
+                                        Image.network(
+                                      'https://via.placeholder.com/75',
+                                      width: 75,
+                                      height: 75,
+                                      fit: BoxFit.cover,
+                                    ),
+                                    fit: BoxFit.cover,
                                   ),
                                 ),
                               ),
