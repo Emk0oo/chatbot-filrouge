@@ -16,9 +16,9 @@ class _ScreenMessagesState extends State<ScreenMessages> {
   final Conversation _conversation = Conversation();
   final Token _token = Token();
 
-  void _navigateToConversation(
-      BuildContext context, int characterId, int universId, int userId) {
-    Navigator.push(
+  Future<void> _navigateToConversation(
+      BuildContext context, int characterId, int universId, int userId) async {
+    await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => ScreenPersonnageConversation(
@@ -27,14 +27,24 @@ class _ScreenMessagesState extends State<ScreenMessages> {
           userId: userId,
         ),
       ),
-    );
+    ).then((_) {
+      // Refresh the page after returning from conversation screen
+      setState(() {});
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Conversations'),
+        title: const Text(
+          'Conversations',
+          style: TextStyle(
+            fontSize: 30,
+            color: Color.fromARGB(255, 0, 0, 0),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
       body: FutureBuilder<String?>(
         future: _token.getToken(),

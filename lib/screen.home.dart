@@ -48,7 +48,7 @@ class _ScreenHomeState extends State<ScreenHome> {
             final String token = snapshot.data!;
             return Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 40.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -178,7 +178,7 @@ class _ScreenHomeState extends State<ScreenHome> {
                       }
                     },
                   ),
-                  const SizedBox(height: 50),
+                  const SizedBox(height: 20),
                   const Text(
                     "Univers",
                     style: TextStyle(
@@ -187,7 +187,6 @@ class _ScreenHomeState extends State<ScreenHome> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 10),
                   Expanded(
                     child: FutureBuilder<List<dynamic>>(
                       future: Univers().getAllUnivers(token),
@@ -236,8 +235,8 @@ class _ScreenHomeState extends State<ScreenHome> {
                                         CrossAxisAlignment.center,
                                     children: [
                                       Container(
-                                        width: 175,
-                                        height: 175,
+                                        width: 225,
+                                        height: 225,
                                         decoration: BoxDecoration(
                                           color: const Color.fromARGB(
                                               255, 238, 238, 238),
