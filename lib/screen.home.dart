@@ -6,6 +6,7 @@ import 'package:chatbot_filrouge/components/navigationBar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatbot_filrouge/screen.univers.description.dart';
+import 'package:chatbot_filrouge/screen.personnageConversation.dart';
 
 class ScreenHome extends StatefulWidget {
   const ScreenHome({super.key});
@@ -93,43 +94,82 @@ class _ScreenHomeState extends State<ScreenHome> {
                               final characterImage =
                                   conversation['character_image'] ??
                                       'https://via.placeholder.com/100';
-                              return Container(
-                                padding: const EdgeInsets.only(right: 10),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      width: 100,
-                                      height: 100,
-                                      decoration: BoxDecoration(
-                                        color: const Color.fromARGB(
-                                            255, 238, 238, 238),
-                                        borderRadius: BorderRadius.circular(9),
-                                      ),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(9),
-                                        child: CachedNetworkImage(
-                                          imageUrl: characterImage,
-                                          placeholder: (context, url) =>
-                                              const Center(
-                                                  child:
-                                                      CircularProgressIndicator()),
-                                          errorWidget: (context, url, error) =>
-                                              Image.network(
-                                            'https://via.placeholder.com/100',
-                                            fit: BoxFit.cover,
-                                          ),
-                                          fit: BoxFit.cover,
+                              final characterId =
+                                  conversation['character_id'] ?? 0;
+                              final universId =
+                                  conversation['universe_id'] ?? 0;
+                              final userId = conversation['user_id'] ?? 0;
+
+                              return GestureDetector(
+                                onTap: () {
+                                  debugPrint(
+                                      'conversation[id]: ${conversation['id']}');
+                                  debugPrint(conversations.toString());
+                                  if (characterId != 0 &&
+                                      universId != 0 &&
+                                      userId != 0) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            ScreenPersonnageConversation(
+                                          characterId: characterId,
+                                          universId: universId,
+                                          userId: userId,
                                         ),
                                       ),
-                                    ),
-                                    Text(characterName),
-                                    Text(
-                                      universeName,
-                                      style:
-                                          const TextStyle(color: Colors.grey),
-                                    ),
-                                  ],
+                                    );
+                                  } else {
+                                    // Gérer le cas où l'un des IDs est nul
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text(
+                                              'Données de conversation manquantes')),
+                                    );
+                                  }
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.only(right: 10),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        width: 100,
+                                        height: 100,
+                                        decoration: BoxDecoration(
+                                          color: const Color.fromARGB(
+                                              255, 238, 238, 238),
+                                          borderRadius:
+                                              BorderRadius.circular(9),
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(9),
+                                          child: CachedNetworkImage(
+                                            imageUrl: characterImage,
+                                            placeholder: (context, url) =>
+                                                const Center(
+                                                    child:
+                                                        CircularProgressIndicator()),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    Image.network(
+                                              'https://via.placeholder.com/100',
+                                              fit: BoxFit.cover,
+                                            ),
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+                                      Text(characterName),
+                                      Text(
+                                        universeName,
+                                        style:
+                                            const TextStyle(color: Colors.grey),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               );
                             },

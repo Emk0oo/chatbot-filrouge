@@ -1,4 +1,3 @@
-// lib/screen/screen_personnage_conversation.dart
 import 'package:flutter/material.dart';
 import 'package:chatbot_filrouge/class/Conversation.class.dart';
 import 'package:chatbot_filrouge/class/Token.dart';
@@ -138,9 +137,9 @@ class _ScreenPersonnageConversationState
                                   ? Alignment.centerRight
                                   : Alignment.centerLeft,
                               child: Container(
-                                margin: EdgeInsets.symmetric(
+                                margin: const EdgeInsets.symmetric(
                                     vertical: 5, horizontal: 10),
-                                padding: EdgeInsets.all(10),
+                                padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
                                   color: isSentByHuman
                                       ? Colors.blue
@@ -177,7 +176,7 @@ class _ScreenPersonnageConversationState
                             ),
                           ),
                           IconButton(
-                            icon: Icon(Icons.send),
+                            icon: const Icon(Icons.send),
                             onPressed: () async {
                               String content = _messageController.text;
                               _messageController.clear();

@@ -88,6 +88,9 @@ class Conversation {
           await getUniverse(token, characterDetails['universe_id']);
       enrichedConversations.add({
         'id': conversation['id'],
+        'character_id': conversation['character_id'], // Ajout de character_id
+        'universe_id': characterDetails['universe_id'], // Ajout de universe_id
+        'user_id': conversation['user_id'], // Ajout de user_id
         'character_name': characterDetails['name'],
         'universe_name': universeDetails['name'],
         'character_image': 'https://mds.sprw.dev/image_data/' +
