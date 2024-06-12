@@ -123,15 +123,11 @@ class _ScreenHomeState extends State<ScreenHome> {
                                         ),
                                       ),
                                     ),
-                                    const SizedBox(height: 8),
-                                    Center(
-                                      child: Text(
-                                        characterName,
-                                        style: const TextStyle(
-                                          color: Color.fromARGB(255, 0, 0, 0),
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
+                                    Text(characterName),
+                                    Text(
+                                      universeName,
+                                      style:
+                                          const TextStyle(color: Colors.grey),
                                     ),
                                   ],
                                 ),
