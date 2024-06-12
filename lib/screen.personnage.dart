@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:chatbot_filrouge/class/token.dart';
 import 'package:chatbot_filrouge/class/Personnage.class.dart';
 import 'package:chatbot_filrouge/screen.personnageConversation.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:convert';
 
 class ScreenPersonnage extends StatefulWidget {
@@ -108,7 +109,18 @@ class _ScreenPersonnageState extends State<ScreenPersonnage> {
                         height: 375,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(9),
-                          child: Image.network(imageUrl, fit: BoxFit.cover),
+                          child: CachedNetworkImage(
+                            imageUrl: imageUrl,
+                            placeholder: (context, url) => const Center(
+                                child: CircularProgressIndicator()),
+                            errorWidget: (context, url, error) => Image.network(
+                              'https://via.placeholder.com/175',
+                              width: 375,
+                              height: 375,
+                              fit: BoxFit.cover,
+                            ),
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                     ),
@@ -123,10 +135,25 @@ class _ScreenPersonnageState extends State<ScreenPersonnage> {
                       personnage['description'],
                       style: const TextStyle(fontSize: 16),
                     ),
-                    const SizedBox(height: 10),
-                    TextButton(
-                      onPressed: () => startConversation(token),
-                      child: Text(personnage['name']),
+                    const SizedBox(height: 20),
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: () => startConversation(token),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 30, vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          primary: Colors.black, // Couleur de fond du bouton
+                          onPrimary: Colors.white, // Couleur du texte du bouton
+                          textStyle: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        child: Text('Dialoguer avec ${personnage['name']}'),
+                      ),
                     ),
                   ],
                 ),
