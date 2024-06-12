@@ -1,11 +1,11 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:chatbot_filrouge/class/Univers.dart';
+import 'package:chatbot_filrouge/class/Conversation.class.dart';
 import 'package:chatbot_filrouge/components/navigationBar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
-import 'package:chatbot_filrouge/screen.univers.description.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chatbot_filrouge/screen.univers.description.dart';
 
 class ScreenHome extends StatefulWidget {
   const ScreenHome({super.key});
@@ -41,10 +41,10 @@ class _ScreenHomeState extends State<ScreenHome> {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return const Center(child: Text('Erreur de chargement du token'));
-          } else if (!snapshot.hasData) {
+          } else if (!snapshot.hasData || snapshot.data == null) {
             return const Center(child: Text('Token non disponible'));
           } else {
-            final String? token = snapshot.data;
+            final String token = snapshot.data!;
             return Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
@@ -61,35 +61,86 @@ class _ScreenHomeState extends State<ScreenHome> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                width: 100,
-                                height: 100,
-                                decoration: BoxDecoration(
-                                  color:
-                                      const Color.fromARGB(255, 238, 238, 238),
-                                  borderRadius: BorderRadius.circular(9),
+                  FutureBuilder<List<Map<String, dynamic>>>(
+                    future:
+                        Conversation().getAllConversationsWithDetails(token),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return const Center(
+                            child:
+                                Text('Erreur de chargement des conversations'));
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return const Center(
+                            child: Text('Aucune conversation disponible'));
+                      } else {
+                        final conversations = snapshot.data!;
+                        return SizedBox(
+                          height:
+                              140, // Ajustez cette valeur en fonction de vos besoins
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: conversations.length,
+                            itemBuilder: (context, index) {
+                              final conversation = conversations[index];
+                              final characterName =
+                                  conversation['character_name'] ??
+                                      'Nom personnage';
+                              final universeName =
+                                  conversation['universe_name'] ??
+                                      'Nom univers';
+                              final characterImage =
+                                  conversation['character_image'] ??
+                                      'https://via.placeholder.com/100';
+                              return Container(
+                                padding: const EdgeInsets.only(right: 10),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      width: 100,
+                                      height: 100,
+                                      decoration: BoxDecoration(
+                                        color: const Color.fromARGB(
+                                            255, 238, 238, 238),
+                                        borderRadius: BorderRadius.circular(9),
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(9),
+                                        child: CachedNetworkImage(
+                                          imageUrl: characterImage,
+                                          placeholder: (context, url) =>
+                                              const Center(
+                                                  child:
+                                                      CircularProgressIndicator()),
+                                          errorWidget: (context, url, error) =>
+                                              Image.network(
+                                            'https://via.placeholder.com/100',
+                                            fit: BoxFit.cover,
+                                          ),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Center(
+                                      child: Text(
+                                        characterName,
+                                        style: const TextStyle(
+                                          color: Color.fromARGB(255, 0, 0, 0),
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              const Text("Nom personnage"),
-                              const Text(
-                                "Nom univers",
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                            ],
+                              );
+                            },
                           ),
-                        ),
-                        // Ajoutez d'autres containers ici pour les autres conversations
-                      ],
-                    ),
+                        );
+                      }
+                    },
                   ),
                   const SizedBox(height: 50),
                   const Text(
@@ -100,6 +151,7 @@ class _ScreenHomeState extends State<ScreenHome> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                  const SizedBox(height: 10),
                   Expanded(
                     child: FutureBuilder<List<dynamic>>(
                       future: Univers().getAllUnivers(token),
@@ -121,11 +173,13 @@ class _ScreenHomeState extends State<ScreenHome> {
                             scrollDirection: Axis.horizontal,
                             itemCount: data.length,
                             itemBuilder: (context, index) {
-                              final universId = data[index]['id'].toString();
-                              final imageUrl = data[index]['image'] == ''
-                                  ? 'https://via.placeholder.com/175'
-                                  : 'https://mds.sprw.dev/image_data/' +
-                                      data[index]['image'];
+                              final universId =
+                                  data[index]['id']?.toString() ?? '0';
+                              final imageUrl = (data[index]['image'] == ''
+                                      ? 'https://via.placeholder.com/175'
+                                      : 'https://mds.sprw.dev/image_data/' +
+                                          data[index]['image']) ??
+                                  'https://via.placeholder.com/175';
                               return GestureDetector(
                                 onTap: () {
                                   Navigator.push(
@@ -174,7 +228,8 @@ class _ScreenHomeState extends State<ScreenHome> {
                                         ),
                                       ),
                                       const SizedBox(height: 8),
-                                      Text(data[index]['name']),
+                                      Text(
+                                          data[index]['name'] ?? 'Nom univers'),
                                     ],
                                   ),
                                 ),

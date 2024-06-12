@@ -1,6 +1,6 @@
-// lib/class/Conversation.class.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:chatbot_filrouge/class/Univers.dart'; // Importer la classe Univers
 
 class Conversation {
   Future<void> createConversation(
@@ -31,15 +31,16 @@ class Conversation {
     );
 
     if (response.statusCode != 200) {
-      throw Exception('Failed to get conversation');
+      throw Exception('Failed to get conversations');
     }
 
     List<dynamic> conversations = jsonDecode(response.body);
     return conversations;
   }
 
-  Future<void> getConversation(String token, int conversationId) async {
-    var url = Uri.parse('https://mds.sprw.dev/conversations/$conversationId');
+  Future<Map<String, dynamic>> getCharacter(
+      String token, int characterId) async {
+    var url = Uri.parse('https://mds.sprw.dev/characters/$characterId');
     var response = await http.get(
       url,
       headers: {
@@ -49,8 +50,10 @@ class Conversation {
     );
 
     if (response.statusCode != 200) {
-      throw Exception('Failed to get conversation');
+      throw Exception('Failed to get character');
     }
+
+    return jsonDecode(response.body);
   }
 
   Future<void> deleteConversation(String token, int conversationId) async {
@@ -66,5 +69,32 @@ class Conversation {
     if (response.statusCode != 204) {
       throw Exception('Failed to delete conversation');
     }
+  }
+
+  Future<Map<String, dynamic>> getUniverse(String token, int universeId) async {
+    var univers = Univers();
+    return await univers.getSingleUnivers(token, universeId);
+  }
+
+  Future<List<Map<String, dynamic>>> getAllConversationsWithDetails(
+      String token) async {
+    List<dynamic> conversations = await getAllConversation(token);
+
+    List<Map<String, dynamic>> enrichedConversations = [];
+    for (var conversation in conversations) {
+      var characterDetails =
+          await getCharacter(token, conversation['character_id']);
+      var universeDetails =
+          await getUniverse(token, characterDetails['universe_id']);
+      enrichedConversations.add({
+        'id': conversation['id'],
+        'character_name': characterDetails['name'],
+        'universe_name': universeDetails['name'],
+        'character_image': 'https://mds.sprw.dev/image_data/' +
+            (characterDetails['image'] ?? 'placeholder.png'),
+      });
+    }
+
+    return enrichedConversations;
   }
 }
