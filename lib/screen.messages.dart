@@ -1,3 +1,4 @@
+import 'package:chatbot_filrouge/components/navigationBar.dart';
 import 'package:flutter/material.dart';
 import 'package:chatbot_filrouge/class/Conversation.class.dart';
 import 'package:chatbot_filrouge/class/token.dart';
@@ -131,12 +132,14 @@ class _ScreenMessagesState extends State<ScreenMessages> {
                                       style:
                                           const TextStyle(color: Colors.grey),
                                     ),
-                                    const Divider(),
                                   ],
                                 ),
                               ),
                             ],
                           ),
+                        ),
+                        const Divider(
+                          color: Colors.grey,
                         ),
                       ],
                     ),
@@ -147,6 +150,7 @@ class _ScreenMessagesState extends State<ScreenMessages> {
           );
         },
       ),
+      bottomNavigationBar: const NavigationBarCustom(),
     );
   }
 }
